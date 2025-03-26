@@ -107,11 +107,12 @@ class IndoNLGTokenizer(PreTrainedTokenizer):
         self.indonesian_token = '[indonesia]'
         self.indonesian_token_id = 40002
         
+        # Initialize special token IDs after parent class initialization
         self.special_token_ids = [
             self.bos_token_id, self.eos_token_id, self.sep_token_id, self.cls_token_id, 
             self.unk_token_id, self.pad_token_id, self.mask_token_id,
             self.javanese_token_id, self.sundanese_token_id, self.indonesian_token_id
-        ]
+        ] if hasattr(self, 'bos_token_id') else []
         
     def build_inputs_with_special_tokens(
         self, token_ids_0: List[int], token_ids_1: Optional[List[int]] = None
@@ -199,7 +200,7 @@ class IndoNLGTokenizer(PreTrainedTokenizer):
         return vocab
 
     def _tokenize(self, text: str) -> List[str]:
-        return self.sp_model.encode(text, out_type=str)
+        return self.sp_model.Encode(text, out_type=str)
     
     def _convert_token_to_id(self, token):
         """ Converts a token (str) in an id using the vocab. """
@@ -234,7 +235,7 @@ class IndoNLGTokenizer(PreTrainedTokenizer):
 
     def convert_tokens_to_string(self, tokens):
         """Converts a sequence of tokens (strings for sub-words) in a single string."""
-        return self.sp_model.decode(tokens)
+        return self.sp_model.Decode(tokens)
 
     def decode(self, inputs, skip_special_tokens=False):
         prev_val = self.decode_special_token
@@ -244,4 +245,3 @@ class IndoNLGTokenizer(PreTrainedTokenizer):
         self.decode_special_token = prev_val
         
         return outputs
-        
