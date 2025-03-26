@@ -71,6 +71,9 @@ class IndoNLGTokenizer(PreTrainedTokenizer):
         additional_special_tokens=["[java]","[sunda]","[indonesia]","<mask>"],
         **kwargs
     ):
+        # Initialize vocab_size first
+        self.vocab_size = 4  # Base size for special tokens
+        
         super().__init__(
             vocab_file=vocab_file,
             bos_token=bos_token,
@@ -88,6 +91,8 @@ class IndoNLGTokenizer(PreTrainedTokenizer):
         self.vocab_file = vocab_file
         self.decode_special_token = decode_special_token
         self.model_max_length = 1024
+        # Update vocab_size after loading the model
+        self.vocab_size += len(self.sp_model)
         
         # HACK: These tokens were added by fairseq but don't seem to be actually used when duplicated in the actual
         # sentencepiece vocabulary (this is the case for <s> and </s>
@@ -192,7 +197,9 @@ class IndoNLGTokenizer(PreTrainedTokenizer):
 
     @property
     def vocab_size(self):
-        return 4 + len(self.sp_model)
+        if not hasattr(self, '_vocab_size'):
+            self._vocab_size = 4 + len(self.sp_model)
+        return self._vocab_size
 
     def get_vocab(self):
         vocab = {self.convert_ids_to_tokens(i): i for i in range(self.vocab_size)}
