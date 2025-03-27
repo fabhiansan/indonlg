@@ -84,18 +84,7 @@ class IndoNLGTokenizer(PreTrainedTokenizer):
         # Update vocab_size after loading the model
         self._vocab_size += len(self.sp_model)
         
-        super().__init__(
-            vocab_file=vocab_file,
-            bos_token=bos_token,
-            eos_token=eos_token,
-            unk_token=unk_token,
-            sep_token=sep_token,
-            cls_token=cls_token,
-            pad_token=pad_token,
-            mask_token=mask_token,
-            additional_special_tokens=additional_special_tokens,
-            **kwargs,
-        )
+        
         
         # HACK: These tokens were added by fairseq but don't seem to be actually used when duplicated in the actual
         # sentencepiece vocabulary (this is the case for <s> and </s>
@@ -121,6 +110,19 @@ class IndoNLGTokenizer(PreTrainedTokenizer):
             self.unk_token_id, self.pad_token_id, self.mask_token_id,
             self.javanese_token_id, self.sundanese_token_id, self.indonesian_token_id
         ] if hasattr(self, 'bos_token_id') else []
+        
+        super().__init__(
+            vocab_file=vocab_file,
+            bos_token=bos_token,
+            eos_token=eos_token,
+            unk_token=unk_token,
+            sep_token=sep_token,
+            cls_token=cls_token,
+            pad_token=pad_token,
+            mask_token=mask_token,
+            additional_special_tokens=additional_special_tokens,
+            **kwargs,
+        )
         
     def build_inputs_with_special_tokens(
         self, token_ids_0: List[int], token_ids_1: Optional[List[int]] = None
