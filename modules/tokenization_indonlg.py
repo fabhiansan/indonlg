@@ -258,15 +258,13 @@ class IndoNLGTokenizer(PreTrainedTokenizer):
 
     def prepare_input_for_generation(self, input_text, **kwargs):
         """Prepare input for generation task"""
-        inputs = self.encode_plus(
-            input_text,
-            add_special_tokens=True,
-            return_tensors="pt",
-            max_length=self.model_max_length,
-            padding="max_length",
-            truncation=True,
-            **kwargs
-        )
+        # Ensure essential generation parameters are set
+        generation_kwargs = {
+            'add_special_tokens': True,
+            'return_tensors': 'pt',
+            **kwargs  # Let caller override defaults
+        }
+        inputs = self.encode_plus(input_text, **generation_kwargs)
         return {
             "input_ids": inputs["input_ids"],
             "attention_mask": inputs["attention_mask"]
