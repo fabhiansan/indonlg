@@ -74,6 +74,16 @@ class IndoNLGTokenizer(PreTrainedTokenizer):
         # Initialize _vocab_size first with default value
         self._vocab_size = 4  # Base size for special tokens
         
+        
+        self.sp_model = spm.SentencePieceProcessor()
+        self.sp_model.Load(str(vocab_file))
+        self.vocab_file = vocab_file
+        self.decode_special_token = decode_special_token
+        self.model_max_length = 1024
+        
+        # Update vocab_size after loading the model
+        self._vocab_size += len(self.sp_model)
+        
         super().__init__(
             vocab_file=vocab_file,
             bos_token=bos_token,
@@ -86,14 +96,6 @@ class IndoNLGTokenizer(PreTrainedTokenizer):
             additional_special_tokens=additional_special_tokens,
             **kwargs,
         )
-        self.sp_model = spm.SentencePieceProcessor()
-        self.sp_model.Load(str(vocab_file))
-        self.vocab_file = vocab_file
-        self.decode_special_token = decode_special_token
-        self.model_max_length = 1024
-        
-        # Update vocab_size after loading the model
-        self._vocab_size += len(self.sp_model)
         
         # HACK: These tokens were added by fairseq but don't seem to be actually used when duplicated in the actual
         # sentencepiece vocabulary (this is the case for <s> and </s>
