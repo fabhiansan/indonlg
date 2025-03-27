@@ -255,3 +255,19 @@ class IndoNLGTokenizer(PreTrainedTokenizer):
         self.decode_special_token = prev_val
         
         return outputs
+
+    def prepare_input_for_generation(self, input_text, **kwargs):
+        """Prepare input for generation task"""
+        inputs = self.encode_plus(
+            input_text,
+            add_special_tokens=True,
+            return_tensors="pt",
+            max_length=self.model_max_length,
+            padding="max_length",
+            truncation=True,
+            **kwargs
+        )
+        return {
+            "input_ids": inputs["input_ids"],
+            "attention_mask": inputs["attention_mask"]
+        }
